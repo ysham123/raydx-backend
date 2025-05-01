@@ -40,7 +40,7 @@ print(f"Using device: {device}")
 # Load the MobileNetV2 model
 model = models.mobilenet_v2(weights=None)
 model.classifier[1] = torch.nn.Linear(in_features=model.classifier[1].in_features, out_features=2)
-model_path = "../pneumonia_model.pth"  
+model_path = "pneumonia_model.pth"  
 model.load_state_dict(torch.load(model_path, map_location=device))
 model.to(device)
 model.eval()
