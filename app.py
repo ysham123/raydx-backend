@@ -33,6 +33,14 @@ app = Flask(__name__)
 # Enable CORS for requests (allow all origins for debugging)
 CORS(app, resources={r"/predict": {"origins": "*"}})
 
+# Ensure CORS headers are added to all responses, including errors
+@app.after_request
+def add_cors_headers(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+    return response
+
 # Device selection
 device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 print(f"Using device: {device}")
