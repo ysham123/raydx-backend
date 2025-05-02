@@ -1,3 +1,7 @@
 data chestxray
 processed_dataset
 raydx_dataset
+# model checkpoint (huge!)
+pneumonia_model.pth
+# logs (can grow unbounded)
+*.log
