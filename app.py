@@ -31,15 +31,7 @@ if not XAI_API_KEY:
 app = Flask(__name__)
 
 # Enable CORS for requests (allow all origins for debugging)
-CORS(app, resources={r"/predict": {"origins": "https://raydx-frontend.vercel.app"}})
-
-# Ensure CORS headers are added to all responses, including errors
-@app.after_request
-def add_cors_headers(response):
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-    return response
+CORS(app, resources={r"/predict": {"origins": "*"}})
 
 # Device selection
 device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
@@ -156,12 +148,11 @@ def predict():
             report = f"Error generating report: {str(e)}"
             logger.error(f"xAI API error: {str(e)}")
         
-        # Return prediction, confidence, report, and image as hex
+        # Return prediction, confidence, and report (exclude image to reduce response size)
         return jsonify({
             "prediction": predicted_label,
             "confidence": confidence_value,
-            "report": report,
-            "image": image_bytes.hex()
+            "report": report
         })
     
     except Exception as e:
