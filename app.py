@@ -31,7 +31,7 @@ if not XAI_API_KEY:
 app = Flask(__name__)
 
 # Enable CORS for requests (allow all origins for debugging)
-CORS(app, resources={r"/predict": {"origins": "*"}})
+CORS(app, resources={r"/predict": {"origins": "https://raydx-frontend.vercel.app"}})
 
 # Ensure CORS headers are added to all responses, including errors
 @app.after_request
