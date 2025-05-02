@@ -30,7 +30,7 @@ if not XAI_API_KEY:
 # Initialize Flask app
 app = Flask(__name__)
 
-# Enable CORS for requests from Vercel frontend
+# Enable CORS for requests (allow all origins for debugging)
 CORS(app, resources={r"/predict": {"origins": ["http://localhost:3000", "https://raydx-frontend.vercel.app"]}})
 
 # Device selection
@@ -40,7 +40,7 @@ print(f"Using device: {device}")
 # Load the MobileNetV2 model
 model = models.mobilenet_v2(weights=None)
 model.classifier[1] = torch.nn.Linear(in_features=model.classifier[1].in_features, out_features=2)
-model_path = "pneumonia_model.pth"  
+model_path = "pneumonia_model.pth"
 model.load_state_dict(torch.load(model_path, map_location=device))
 model.to(device)
 model.eval()
