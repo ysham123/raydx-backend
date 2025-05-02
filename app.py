@@ -31,7 +31,7 @@ if not XAI_API_KEY:
 app = Flask(__name__)
 
 # Enable CORS for requests (allow all origins for debugging)
-CORS(app, resources={r"/predict": {"origins": ["http://localhost:3000", "https://raydx-frontend.vercel.app"]}})
+CORS(app, resources={r"/predict": {"origins": "*"}})
 
 # Device selection
 device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
