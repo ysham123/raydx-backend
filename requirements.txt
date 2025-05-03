@@ -1,5 +1,5 @@
-torch==1.13.1+cpu
-torchvision==0.14.1+cpu
+https://download.pytorch.org/whl/cpu/torch-1.13.1%2Bcpu-cp39-cp39-linux_x86_64.whl
+https://download.pytorch.org/whl/cpu/torchvision-0.14.1%2Bcpu-cp39-cp39-linux_x86_64.whl
 openai==1.12.0
 scikit-learn==1.2.2
 scipy==1.9.3
