@@ -26,7 +26,10 @@ jiter==0.9.0
 joblib==1.4.2
 MarkupSafe==3.0.2
 mpmath==1.3.0
-networkx==3.4.2
+
+# downgrade networkx for EB compatibility
+networkx==3.2.1
+
 numpy==2.2.5
 openai==1.76.0
 opencv-python==4.11.0.86
