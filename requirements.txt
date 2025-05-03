@@ -1,5 +1,6 @@
-https://download.pytorch.org/whl/cpu/torch-1.13.1%2Bcpu-cp39-cp39-linux_x86_64.whl
-https://download.pytorch.org/whl/cpu/torchvision-0.14.1%2Bcpu-cp39-cp39-linux_x86_64.whl
+--index-url https://download.pytorch.org/whl/cpu
+torch==1.13.1
+torchvision==0.14.1
 openai==1.12.0
 scikit-learn==1.2.2
 scipy==1.9.3
@@ -46,3 +47,4 @@ gevent==23.9.1
 gunicorn==20.1.0
 boto3==1.35.39
 botocore==1.35.39
+EOL
