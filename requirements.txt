@@ -1,3 +1,4 @@
+--find-links https://download.pytorch.org/whl/cpu/torch_stable.html
 annotated-types==0.7.0
 anyio==4.9.0
 blinker==1.9.0
