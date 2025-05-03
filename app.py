@@ -25,26 +25,56 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 XAI_API_KEY = os.getenv('XAI_API_KEY')
 if not XAI_API_KEY:
-    raise ValueError("XAI_API_KEY is not set in .env file")
+    logger.error("XAI_API_KEY is not set in environment variables")
+    raise ValueError("XAI_API_KEY is not set in environment variables")
 
 # Initialize Flask app
 app = Flask(__name__)
+logger.info("Flask app initialized")
 
-# Enable CORS for requests (allow all origins for debugging)
-CORS(app, resources={r"/predict": {"origins": "*"}})
+# Add middleware to log all incoming requests
+@app.before_request
+def log_request_info():
+    logger.info(f"Incoming request: {request.method} {request.path}")
+
+# Enable CORS for requests (restrict to Vercel frontend for production)
+CORS(app, resources={r"/predict": {"origins": "https://raydx-frontend.vercel.app"}})
+
+# Add health check endpoint
+@app.route('/')
+def health_check():
+    logger.info("Health check endpoint accessed")
+    return 'OK', 200
+
+# Add debug route to test routing
+@app.route('/debug')
+def debug_route():
+    logger.info("Debug route accessed")
+    return "Debug route working", 200
+
+# Add catch-all route for debugging
+@app.route('/<path:path>')
+def catch_all(path):
+    logger.info(f"Catch-all route accessed: {path}")
+    return f"Route not found: {path}", 404
 
 # Device selection
 device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
-print(f"Using device: {device}")
+logger.info(f"Using device: {device}")
 
-# Load the MobileNetV2 model
-model = models.mobilenet_v2(weights=None)
-model.classifier[1] = torch.nn.Linear(in_features=model.classifier[1].in_features, out_features=2)
-model_path = "pneumonia_model.pth"
-model.load_state_dict(torch.load(model_path, map_location=device))
-model.to(device)
-model.eval()
-print("Model loaded successfully")
+# Load the MobileNetV2 model locally
+try:
+    model = models.mobilenet_v2(weights=None)
+    model.classifier[1] = torch.nn.Linear(in_features=model.classifier[1].in_features, out_features=2)
+    model_path = "pneumonia_model.pth"  # Assumes the file is in the same directory as app.py
+    logger.info(f"Loading model from {model_path}")
+    model.load_state_dict(torch.load(model_path, map_location=device))
+    model.to(device)
+    model.eval()
+    logger.info("Model loaded successfully")
+except Exception as e:
+    logger.error(f"Failed to load model: {str(e)}")
+    raise
 
 # Define labels
 labels = ["normal", "pneumonia"]
@@ -74,13 +104,16 @@ def is_likely_xray(image):
 
 @app.route('/predict', methods=['POST'])
 def predict():
+    logger.info("Predict endpoint accessed")
     if 'file' not in request.files:
+        logger.error("No file uploaded in request")
         return jsonify({"error": "No file uploaded"}), 400
     
     file = request.files['file']
     
     # Validate file type
     if not file.filename.lower().endswith(('.jpg', '.jpeg', '.png')):
+        logger.error(f"Invalid file type: {file.filename}")
         return jsonify({"error": "Invalid file type. Please upload a JPEG or PNG image."}), 400
     
     try:
@@ -93,10 +126,12 @@ def predict():
         # Validate image dimensions (minimum size)
         width, height = image.size
         if width < 100 or height < 100:
+            logger.error(f"Image too small: {width}x{height}")
             return jsonify({"error": "Image is too small. Minimum dimensions are 100x100 pixels."}), 400
         
         # Check if the image is likely an X-ray
         if not is_likely_xray(image):
+            logger.error("Image does not appear to be an X-ray")
             return jsonify({"error": "Uploaded image does not appear to be an X-ray. Please upload a chest X-ray image."}), 400
         
         # Preprocess the image
@@ -148,7 +183,7 @@ def predict():
             report = f"Error generating report: {str(e)}"
             logger.error(f"xAI API error: {str(e)}")
         
-        # Return prediction, confidence, and report (exclude image to reduce response size)
+        # Return prediction, confidence, and report
         return jsonify({
             "prediction": predicted_label,
             "confidence": confidence_value,
