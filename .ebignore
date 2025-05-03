@@ -1,0 +1,20 @@
+# Core metadata & local tools
+.git
+.gitignore
+.elasticbeanstalk
+.vercel
+node_modules
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Data & models (we pull them from S3)
+data_chestxray
+processed_dataset
+raydx_dataset
+pneumonia_model.pth
+
+# Logs & env
+*.log
+.env
