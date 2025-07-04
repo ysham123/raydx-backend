@@ -1,20 +1,32 @@
-# Core metadata & local tools
-.git
-.gitignore
-.elasticbeanstalk
-.vercel
-node_modules
-
-# Python cache
-__pycache__/
-*.pyc
-
-# Data & models (we pull them from S3)
-data_chestxray
-processed_dataset
-raydx_dataset
+frontend/
+.DS_Store
+get-pip.py
+node_modules/
+data_chestxray/
+processed_dataset/
+raydx_dataset/
 pneumonia_model.pth
-
-# Logs & env
+preprocess.py
+train_model.py
+venv/
+logs/
+*.jpg
+*.jpeg
+*.png
 *.log
-.env
+*.tmp
+*.bak
+.git/
+.venv/
+.cache/
+*.tar
+*.gz
+.pytest_cache/
+dist/
+build/
+.elasticbeanstalk/
+test-env/
+__pycache__/
+*.JPG
+*.JPEG
+*.PNG
